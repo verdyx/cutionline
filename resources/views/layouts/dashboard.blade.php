@@ -89,8 +89,8 @@
 
     <!-- Scripts -->
     @livewireScripts
-    <script data-turbolinks-eval="false" src="https://cdn.jsdelivr.net/gh/livewire/turbolinks@v0.1.x/dist/livewire-turbolinks.js"></script>
-    <script data-turbolinks-eval="false" src="{{ asset('js/app.js') }}"></script>
+    {{-- <script data-turbolinks-eval="false" src="https://cdn.jsdelivr.net/gh/livewire/turbolinks@v0.1.x/dist/livewire-turbolinks.js"></script> --}}
+    {{-- <script data-turbolinks-eval="false" src="{{ asset('js/app.js') }}"></script> --}}
 
     <!-- jQuery  -->
     <script data-turbolinks-eval="false" src="{{ asset('assets/js/jquery.min.js') }}"></script>

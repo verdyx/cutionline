@@ -7,28 +7,83 @@
             <ul class="metismenu" id="side-menu">
                 <li class="menu-title">Menu</li>
                 <li>
-                    <x-nav-link href="{{ route('sales') }}" :active="request()->routeIs('sales')">
-                        <i class="icon-profile"></i><span> Sales </span>
+                    <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                        <i class="icon-accelerator"></i><span> Dashboard </span>
+                    </x-nav-link>
+                </li>
+
+                @if (auth()->user()->role == "Admin")
+                <li>
+                    <a href="javascript:void(0);" class="waves-effect"><i class="icon-profile"></i><span>
+                            Pegawai <span class="float-right menu-arrow"><i
+                                    class="mdi mdi-chevron-right"></i></span> </span></a>
+                    <ul class="submenu">
+                        <li>
+                            <x-nav-link href="{{ route('admin.employee') }}" :active="request()->routeIs('admin.employee')">
+                                <span> Data Pegawai </span>
+                            </x-nav-link>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <x-nav-link href="{{ route('admin.input.leave') }}" :active="request()->routeIs('admin.input.leave')">
+                        <i class="icon-todolist-add"></i><span> Input data cuti Tahunan </span>
                     </x-nav-link>
                 </li>
 
                 <li>
-                    <x-nav-link href="{{ route('pelanggan') }}" :active="request()->routeIs('pelanggan')">
-                        <i class="icon-profile"></i><span> Pelanggan </span>
+                    <x-nav-link href="{{ route('admin.approve') }}" :active="request()->routeIs('admin.approve')">
+                        <i class="icon-check"></i><span> Approval Cuti </span><span class="badge badge-danger badge-pill float-right">9+</span>
                     </x-nav-link>
                 </li>
 
                 <li>
-                    <x-nav-link href="{{ route('barang') }}" :active="request()->routeIs('barang')">
-                        <i class="icon-squares"></i><span> Barang </span>
+                    <x-nav-link href="{{ route('admin.history') }}" :active="request()->routeIs('admin.history')">
+                        <i class="icon-clock"></i><span> History Cuti </span>
                     </x-nav-link>
                 </li>
 
                 <li>
-                    <x-nav-link href="{{ route('order') }}" :active="request()->routeIs('order')">
-                        <i class="icon-shopping-cart"></i><span> Order </span>
+                    <a href="javascript:void(0);" class="waves-effect"><i class="icon-setting-2"></i><span>
+                            Setting <span class="float-right menu-arrow"><i
+                                    class="mdi mdi-chevron-right"></i></span> </span></a>
+                    <ul class="submenu">
+                        <li>
+                            <x-nav-link href="{{ route('admin.user') }}" :active="request()->routeIs('admin.user')">
+                                <span> User </span>
+                            </x-nav-link>
+                        </li>
+                    </ul>
+                </li>
+                @else
+
+                <li>
+                    <a href="javascript:void(0);" class="waves-effect"><i class="icon-profile"></i><span>
+                            Permohonan Cuti <span class="float-right menu-arrow"><i
+                                    class="mdi mdi-chevron-right"></i></span> </span></a>
+                    <ul class="submenu">
+                        <li>
+                            <x-nav-link href="{{ route('employee.leave.year') }}" :active="request()->routeIs('employee.leave.year')">
+                                <span> Tahunan </span>
+                            </x-nav-link>
+                        </li>
+
+                        <li>
+                            <x-nav-link href="{{ route('employee.leave') }}" :active="request()->routeIs('employee.leave')">
+                                <span> Umum </span>
+                            </x-nav-link>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <x-nav-link href="{{ route('employee.history') }}" :active="request()->routeIs('employee.history')">
+                        <i class="icon-clock"></i><span> History Cuti </span>
                     </x-nav-link>
                 </li>
+
+                @endif
 
             </ul>
 

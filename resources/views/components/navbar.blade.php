@@ -1,5 +1,27 @@
 <nav class="navbar-custom">
     <ul class="navbar-right list-inline float-right mb-0">
+
+        <!-- notification -->
+        <li class="dropdown notification-list list-inline-item">
+            <a class="nav-link dropdown-toggle arrow-none waves-effect" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                <i class="mdi mdi-bell-outline noti-icon"></i>
+                <span class="badge badge-pill badge-danger noti-icon-badge">3</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-menu-lg px-1">
+                <!-- item-->
+                <h6 class="dropdown-item-text">
+                        Notifications
+                    </h6>
+                <div class="slimscroll notification-item-list">
+                    <!-- item-->
+                    <a href="javascript:void(0);" class="dropdown-item notify-item active">
+                        <div class="notify-icon bg-warning"><i class="mdi mdi-pause"></i></div>
+                        <p class="notify-details"><b>Pesan baru diterima</b><span class="text-muted">Anda memiliki x pengajuan cuti</span></p>
+                    </a>
+                </div>
+            </div>
+        </li>
+
         <li class="dropdown notification-list list-inline-item">
             <div class="dropdown notification-list nav-pro-img">
                 <a class="dropdown-toggle nav-link arrow-none nav-user" data-toggle="dropdown" href="#" role="button"

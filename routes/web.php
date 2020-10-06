@@ -1,7 +1,11 @@
 <?php
 
 use App\Http\Livewire\Dashboard;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Livewire\User;
+use App\Http\Livewire\Employee;
+use App\Http\Livewire\Leave\Approve;
+use App\Http\Livewire\Leave\History;
+use App\Http\Livewire\Leave\Input;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,9 +21,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'web'])->group(function () {
 
-    Route::get('/', Dashboard::class)->name('dashboard');
+    Route::middleware('admin')->name('admin')->prefix('admin')->group(function () {
+        Route::get('/', Dashboard::class)->name('dashboard');
+        // Route::get('/users', User::class)->name('user');
+    });
 
-    // Route::middleware('role:Admin')->group(function () {
-    //     return view('dashboard');
-    // });
+    Route::middleware('employee')->name('employee')->prefix('employee')->group(function () {
+        Route::get('/', Dashboard::class)->name('dashboard');
+    });
+
 });

@@ -16,6 +16,8 @@ class LeaveYear extends Model
      */
     protected $guarded = [];
 
+    public $timestamps = false;
+
     /**
      * Get the employee for the leave.
      */

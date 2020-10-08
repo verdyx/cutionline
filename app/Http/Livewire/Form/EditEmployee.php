@@ -57,25 +57,6 @@ class EditEmployee extends Component
         'password' => 'nullable|min:6',
     ];
 
-    protected $messages = [
-        'nama.required' => ':attribute pegawai wajib diisi',
-        'jenis_kelamin.required' => ':attribute wajib dipilih',
-        'jabatan.required' => ':attribute wajib diisi',
-        'pangkat.required' => ':attribute wajib diisi',
-        'unit_kerja.required' => ':attribute wajib diisi',
-        'masa_kerja.required' => ':attribute wajib diisi',
-        'inti.required' => ':attribute wajib dipilih',
-        'tempat_lahir.required' => ':attribute lahir wajib diisi',
-        'tanggal_lahir.required' => ':attribute Lahir wajib diisi',
-        'golongan_darah.required' => ':attribute darah wajib dipilih',
-        'agama.required' => ':attribute wajib dipilih',
-        'telepon.required' => ':attribute wajib diisi',
-        'alamat.required' => ':attribute wajib diisi',
-        'hak_akses.required' => ':attribute wajib dipilih',
-        'password.required' => ':attribute wajib diisi',
-        'password.min' => ':attribute minimal :min karakter',
-    ];
-
     public function mount($id)
     {
         $this->employee = Employee::find($id);

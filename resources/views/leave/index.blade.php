@@ -7,14 +7,7 @@
 
     <div class="row">
         <div class="col-12">
-            @if (session()->has('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    {{ session('success') }}
-                </div>
-            @endif
+            <x-validation/>
             <div class="card m-b-30">
                 <div class="card-body">
                     <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">

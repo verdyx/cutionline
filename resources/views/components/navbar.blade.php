@@ -1,7 +1,11 @@
 <nav class="navbar-custom">
     <ul class="navbar-right list-inline float-right mb-0">
         @php
-            $leave = App\Models\Leave::whereNull('status')->count();
+            if (auth()->user()->role == "Admin") {
+                $leave = App\Models\Leave::whereNull('status')->count();
+            } else {
+                $leave = App\Models\Leave::whereUserId(auth()->id())->whereNull('status')->count();
+            }
         @endphp
         <!-- notification -->
         <li class="dropdown notification-list list-inline-item">

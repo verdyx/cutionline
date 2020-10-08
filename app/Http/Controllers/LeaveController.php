@@ -23,8 +23,9 @@ class LeaveController extends Controller
 
     public function employee()
     {
+        $leaves = LeaveYear::all();
         $employees = Employee::all();
-        return view('leave.employee', compact('employees'));
+        return view('leave.employee', compact('leaves', 'employees'));
     }
 
     public function acc($id, $status)
@@ -37,20 +38,31 @@ class LeaveController extends Controller
 
     public function inputLeave(Request $request)
     {
+
         $request->validate([
             'nip' => 'required',
-            'jumlah' => 'required|gte:0'
+            'hari' => 'required|gte:0',
+            'tahun' => 'required'
         ]);
 
-        $employee = Leave::whereUserId($request->nip)->first();
+        $leave = LeaveYear::whereEmployeeId($request->nip)->whereLeaveYear($request->tahun)->first();
+        if ($leave) {
+            $leave->day = $leave->day + $request->hari;
+            $leave->save();
+        } else {
+            LeaveYear::create([
+                'employee_id' => $request->nip,
+                'leave_year' => $request->tahun,
+                'day' => $request->hari
+            ]);
+        }
 
-        LeaveYear::updateOrCreate([
-            'employee_id' => $employee->id,
-            'year' => $request->year,
-        ], [
-            'jumlah' => $request->jumlah
-        ]);
+        return back()->with('success', 'Berhasil menambahkan cuti');
+    }
 
-        return with('success', 'Berhasil menambahkan cuti');
+    public function deleteLeave($id)
+    {
+        LeaveYear::destroy($id);
+        return back()->with('success', 'Data berhasil dihapus');
     }
 }

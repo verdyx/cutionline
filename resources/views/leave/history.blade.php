@@ -7,43 +7,35 @@
 
     <div class="row">
         <div class="col-12">
-            @if (session()->has('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    {{ session('success') }}
-                </div>
-            @endif
+            <x-validation/>
             <div class="card m-b-30">
                 <div class="card-body">
                     <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
                             <tr>
-                                <th>No. Cuti</th>
-                                <th>Nama</th>
                                 <th>Tgl. Pengajuan</th>
                                 <th>Jml. Hari</th>
                                 <th>Dari Tanggal</th>
                                 <th>Sampai Tanggal</th>
                                 <th>Jenis Cuti</th>
                                 <th>Persetujuan</th>
-                                <th>Action</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach ($leaves as $item)
                             <tr>
-                                <td> {{ $item->letter_number }} </td>
-                                <td> {{ $item->user->name }} </td>
-                                <td> {{ $item->created_at }} </td>
+                                <td> {{ date('d M Y', strtotime($item->from_date)) }} </td>
                                 <td> {{ $item->number_of_days }} </td>
-                                <td> {{ $item->from_date }} </td>
-                                <td> {{ $item->to_date }} </td>
+                                <td> {{ date('d M Y', strtotime($item->from_date)) }} </td>
+                                <td> {{ date('d M Y', strtotime($item->to_date)) }} </td>
                                 <td> {{ $item->kind_of_leave }} </td>
-                                <td> {{ $item->status }} </td>
-                                <a href="{{ route('admin.approve', $item->id) }}" class="btn btn-primary waves-effect waves-light"><i class="mdi mdi-printer"></i></a>
+                                <td>
+                                    {{ $item->status }}
+                                    @if ($item->status == "Disetujui")
+                                    <a href="{{ route('admin.approve', $item->id) }}" class="btn btn-primary waves-effect waves-light"><i class="mdi mdi-printer"></i></a>
+                                    @endif
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>

@@ -19,7 +19,7 @@ class CreateLeavesTable extends Migration
             $table->string('letter_number')->nullable();
             $table->integer('number_of_days');
             $table->enum('kind_of_leave', ['Cuti Tahunan', 'Cuti Besar', 'Cuti Sakit', 'Cuti Melahirkan', 'Cuti Karena Alasan Penting', 'Cuti di Luar Tanggungan Negara']);
-            $table->enum('status', ['Disetujui', 'Tidak disetujui', 'Perubahan', 'Ditangguhkan']);
+            $table->enum('status', ['Disetujui', 'Tidak disetujui', 'Perubahan', 'Ditangguhkan'])->nullable();
             $table->date('from_date');
             $table->date('to_date');
             $table->timestamps();

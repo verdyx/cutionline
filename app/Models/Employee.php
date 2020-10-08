@@ -17,6 +17,28 @@ class Employee extends Model
     protected $guarded = [];
 
     /**
+     * Get the employee's name.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        return $this->user->name;
+    }
+
+    /**
+     * Get the employee's first username.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getUsernameAttribute()
+    {
+        return $this->user->username;
+    }
+
+    /**
      * Get the user for the employee.
      */
     public function user()

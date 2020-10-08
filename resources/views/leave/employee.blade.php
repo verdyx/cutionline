@@ -7,14 +7,7 @@
 
     <div class="row">
         <div class="col-12">
-            @if (session()->has('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    {{ session('success') }}
-                </div>
-            @endif
+            <x-validation/>
             <button class="btn btn-primary mo-mb-2 mb-3 collapsed" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                 Tambah data cuti tahunan
             </button>
@@ -22,7 +15,8 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="card card-body mt-3 mb-0">
-                            <form action="">
+                            <form action="{{ route('admin.create.leave.employee') }}" method="POST" autocomplete="off">
+                                @csrf
                                 <div class="form-group row @error('nip') has-danger @enderror">
                                     <label class="col-sm-2 col-form-label">NIP</label>
                                     <div class="col-sm-10">
@@ -38,14 +32,14 @@
                                 <div class="form-group row @error('hari') has-danger @enderror">
                                     <label class="col-sm-2 col-form-label">Hari</label>
                                     <div class="col-sm-10">
-                                        <input type="number" min="1" class="form-control" placeholder="Masukkan jumlah hari">
+                                        <input type="number" name="hari" min="1" class="form-control" placeholder="Masukkan jumlah hari" value="{{ old('hari') }}">
                                         @error('hari') <span class="error">{{ $message }}</span> @enderror
                                     </div>
                                 </div>
                                 <div class="form-group row @error('tahun') has-danger @enderror">
                                     <label class="col-sm-2 col-form-label">Tahun Cuti</label>
                                     <div class="col-sm-10">
-                                        <input type="text" class="form-control" placeholder="Masukkan tahun cuti">
+                                        <input type="text" class="form-control" name="tahun" placeholder="Masukkan tahun cuti" value="{{ old('tahun') }}">
                                         @error('tahun') <span class="error">{{ $message }}</span> @enderror
                                     </div>
                                 </div>
@@ -67,18 +61,24 @@
                             <tr>
                                 <th>NIP</th>
                                 <th>Nama</th>
-                                <th>Sisa Cuti Tahunan</th>
+                                <th>Sisa Cuti</th>
+                                <th>Tahun</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            {{-- @foreach ($users as $item)
+                            @foreach ($leaves as $item)
                             <tr>
-                                <td> {{ $item->username }} </td>
-                                <td> {{ $item->name }} </td>
-                                <td> {{ $item->show_password }} </td>
+                                <td> {{ $item->employee->username }} </td>
+                                <td> {{ $item->employee->name }} </td>
+                                <td> {{ $item->day }} </td>
+                                <td> {{ $item->leave_year }} </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger waves-effect waves-light" data-toggle="modal" data-target="#myModal{{ $item->id }}"><i class="mdi mdi-trash-can"></i></button>
+                                </td>
                             </tr>
-                            @endforeach --}}
+                            @endforeach
                         </tbody>
                     </table>
 
@@ -86,6 +86,38 @@
             </div>
         </div> <!-- end col -->
     </div> <!-- end row -->
+
+    @push('modals')
+    <!-- sample modal content -->
+    <div>
+    @foreach ($leaves as $item)
+        <div id="myModal{{ $item->id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title mt-0" id="myModalLabel">Hapus data</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Anda yakin menghapus data cuti pegawai <b>{{ $item->employee->name }}</b> ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary waves-effect" data-dismiss="modal">Tidak</button>
+                        <form action="{{ route('admin.destroy.leave.employee', $item->id) }}" method="POST">
+                            @method('delete')
+                            @csrf
+                            <button type="submit" class="btn btn-danger waves-effect waves-light">Ya</button>
+                        </form>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    @endforeach
+    </div>
+
+    @endpush
 
     @push('css')
     <!-- DataTables -->

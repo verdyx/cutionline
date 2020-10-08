@@ -14,7 +14,7 @@
                 <div>
                     <h5 class="font-16">Total cuti</h5>
                 </div>
-                <h3 class="mt-4">43,225</h3>
+                <h3 class="mt-4">{{ $cuti }}</h3>
             </div>
         </div>
     </div>
@@ -28,7 +28,7 @@
                 <div>
                     <h5 class="font-16">Total Approve</h5>
                 </div>
-                <h3 class="mt-4">$73,265</h3>
+                <h3 class="mt-4">{{ $approve }}</h3>
             </div>
         </div>
     </div>
@@ -42,7 +42,7 @@
                 <div>
                     <h5 class="font-16">Total Waiting</h5>
                 </div>
-                <h3 class="mt-4">447</h3>
+                <h3 class="mt-4">{{ $waiting }}</h3>
             </div>
         </div>
     </div>
@@ -50,13 +50,23 @@
     <div class="col-sm-6 col-xl-3">
         <div class="card">
             <div class="card-heading p-4">
-                <div class="mini-stat-icon float-right">
-                    <i class="mdi mdi-face bg-danger text-white"></i>
-                </div>
-                <div>
-                    <h5 class="font-16">Total Pegawai</h5>
-                </div>
-                <h3 class="mt-4">86%</h3>
+                @if (auth()->user()->role == "Admin")
+                    <div class="mini-stat-icon float-right">
+                        <i class="mdi mdi-face bg-danger text-white"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-16">Total Pegawai</h5>
+                    </div>
+                    <h3 class="mt-4">{{ $pegawai }}</h3>
+                @else
+                    <div class="mini-stat-icon float-right">
+                        <i class="mdi mdi-file-remove bg-danger text-white"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-16">Total Ditolak</h5>
+                    </div>
+                    <h3 class="mt-4">{{ $refuse }}</h3>
+                @endif
             </div>
         </div>
     </div>

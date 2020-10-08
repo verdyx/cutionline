@@ -17,13 +17,16 @@ class CreateEmployeesTable extends Migration
             $table->id();
             $table->enum('gender', ['Laki-Laki', 'Perempuan']);
             $table->string('position');
+            $table->string('rank');
             $table->string('birthday');
             $table->string('birthplace');
             $table->enum('blood_types', ['A', 'B', 'O', 'AB']);
             $table->enum('religion', ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Budha', 'Kepercayaan Lain']);
-            $table->enum('status', ['K0', 'K1', 'K2', 'K3']);
+            $table->string('work_unit');
+            $table->string('years_of_service');
             $table->string('phone');
             $table->string('address');
+            $table->boolean('is_core');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
 

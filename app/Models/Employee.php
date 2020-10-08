@@ -17,10 +17,10 @@ class Employee extends Model
     protected $guarded = [];
 
     /**
-     * Get the users for the employee.
+     * Get the user for the employee.
      */
-    public function users()
+    public function user()
     {
-        $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

@@ -89,25 +89,25 @@
 
     <!-- Scripts -->
     @livewireScripts
-    {{-- <script data-turbolinks-eval="false" src="https://cdn.jsdelivr.net/gh/livewire/turbolinks@v0.1.x/dist/livewire-turbolinks.js"></script> --}}
-    {{-- <script data-turbolinks-eval="false" src="{{ asset('js/app.js') }}"></script> --}}
+
+    <script src="{{ asset('js/app.js') }}"></script>
 
     <!-- jQuery  -->
-    <script data-turbolinks-eval="false" src="{{ asset('assets/js/jquery.min.js') }}"></script>
-    <script data-turbolinks-eval="false" src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
-    <script data-turbolinks-eval="false" src="{{ asset('assets/js/metismenu.min.js') }}"></script>
-    <script data-turbolinks-eval="false" src="{{ asset('assets/js/jquery.slimscroll.js') }}"></script>
-    <script data-turbolinks-eval="false" src="{{ asset('assets/js/waves.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/js/metismenu.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.slimscroll.js') }}"></script>
+    <script src="{{ asset('assets/js/waves.min.js') }}"></script>
 
     <!--Morris Chart-->
-    <script data-turbolinks-eval="false" src="{{ asset('assets/plugins/morris/morris.min.js') }}"></script>
-    <script data-turbolinks-eval="false" src="{{ asset('assets/plugins/raphael/raphael.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/morris/morris.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/raphael/raphael.min.js') }}"></script>
 
     <!-- Spesific Pages JS -->
     @stack('js')
 
     <!-- App js -->
-    <script data-turbolinks-eval="false" src="{{ asset('assets/js/app.js') }}"></script>
+    <script src="{{ asset('assets/js/app.js') }}"></script>
 </body>
 
 </html>

@@ -1,7 +1,7 @@
 <x-dashboard-layout>
     <x-slot name="header">
         <div class="col-sm-6">
-            <h4 class="page-title">User</h4>
+            <h4 class="page-title">Pre Approval Cuti</h4>
         </div>
     </x-slot>
 
@@ -20,32 +20,28 @@
                     <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
                             <tr>
-                                <th>Username</th>
+                                <th>No. Cuti</th>
                                 <th>Nama</th>
-                                <th>Password</th>
-                                <th>Hak Akses</th>
-                                <th>Aktif</th>
+                                <th>Tgl. Pengajuan</th>
+                                <th>Jml. Hari</th>
+                                <th>Dari Tanggal</th>
+                                <th>Sampai Tanggal</th>
+                                <th>Jenis Cuti</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            @foreach ($users as $item)
+                            @foreach ($leaves as $item)
                             <tr>
-                                <td> {{ $item->username }} </td>
-                                <td> {{ $item->name }} </td>
-                                <td> {{ $item->show_password }} </td>
-                                <td> {{ $item->role }} </td>
-                                <td>
-                                    @if ($item->is_active == 1)
-                                        Y
-                                    @else
-                                        N
-                                    @endif
-                                </td>
-                                <td>
-                                    <a href="{{ route('admin.user.status', $item->id) }}" class="btn btn-primary waves-effect waves-light"><i class="mdi mdi-refresh"></i></a>
-                                </td>
+                                <td> {{ $item->letter_number }} </td>
+                                <td> {{ $item->user->name }} </td>
+                                <td> {{ $item->created_at }} </td>
+                                <td> {{ $item->number_of_days }} </td>
+                                <td> {{ $item->from_date }} </td>
+                                <td> {{ $item->to_date }} </td>
+                                <td> {{ $item->kind_of_leave }} </td>
+                                <a href="{{ route('admin.approve', $item->id) }}" class="btn btn-primary waves-effect waves-light"><i class="mdi mdi-file-document-edit-outline"></i></a>
                             </tr>
                             @endforeach
                         </tbody>

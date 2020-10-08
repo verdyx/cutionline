@@ -1,12 +1,17 @@
 <nav class="navbar-custom">
     <ul class="navbar-right list-inline float-right mb-0">
-
+        @php
+            $leave = App\Models\Leave::whereNull('status')->count();
+        @endphp
         <!-- notification -->
         <li class="dropdown notification-list list-inline-item">
             <a class="nav-link dropdown-toggle arrow-none waves-effect" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                 <i class="mdi mdi-bell-outline noti-icon"></i>
-                <span class="badge badge-pill badge-danger noti-icon-badge">3</span>
+                @if ($leave)
+                <span class="badge badge-pill badge-danger noti-icon-badge">{{ $leave }}</span>
+                @endif
             </a>
+            @if ($leave)
             <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-menu-lg px-1">
                 <!-- item-->
                 <h6 class="dropdown-item-text">
@@ -16,10 +21,11 @@
                     <!-- item-->
                     <a href="javascript:void(0);" class="dropdown-item notify-item active">
                         <div class="notify-icon bg-warning"><i class="mdi mdi-pause"></i></div>
-                        <p class="notify-details"><b>Pesan baru diterima</b><span class="text-muted">Anda memiliki x pengajuan cuti</span></p>
+                        <p class="notify-details"><b>Pesan baru diterima</b><span class="text-muted">Anda memiliki {{ $leave }} pengajuan cuti</span></p>
                     </a>
                 </div>
             </div>
+            @endif
         </li>
 
         <li class="dropdown notification-list list-inline-item">

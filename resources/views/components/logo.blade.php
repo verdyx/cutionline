@@ -1,8 +1,8 @@
 <a href="#" class="logo">
     <span class="logo-light">
-        <i class="mdi mdi-camera-control"></i> CUTI
+        SIPECI
     </span>
     <span class="logo-sm">
-        <i class="mdi mdi-camera-control"></i>
+        S
     </span>
 </a>

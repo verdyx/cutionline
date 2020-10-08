@@ -33,8 +33,14 @@
                 </li>
 
                 <li>
-                    <x-nav-link href="{{ route('admin.approve') }}" :active="request()->routeIs('admin.approve')">
-                        <i class="icon-check"></i><span> Approval Cuti </span><span class="badge badge-danger badge-pill float-right">9+</span>
+                    <x-nav-link href="{{ route('admin.approves') }}" :active="request()->routeIs('admin.approves')">
+                        @php
+                            $leave = App\Models\Leave::whereNull('status')->count();
+                        @endphp
+                        <i class="icon-check"></i><span> Approval Cuti </span>
+                        @if ($leave)
+                        <span class="badge badge-danger badge-pill float-right">{{ $leave }}</span>
+                        @endif
                     </x-nav-link>
                 </li>
 

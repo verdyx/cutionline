@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Leave extends Model
+class LeaveYear extends Model
 {
     use HasFactory;
 
@@ -17,10 +17,10 @@ class Leave extends Model
     protected $guarded = [];
 
     /**
-     * Get the user for the leave.
+     * Get the employee for the leave.
      */
-    public function user()
+    public function employee()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Employee::class, 'employee_id');
     }
 }

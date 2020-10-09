@@ -16,11 +16,21 @@ class Leave extends Model
      */
     protected $guarded = [];
 
+    protected $dates = [
+        'from_date',
+        'to_date',
+    ];
+
     /**
-     * Get the users for the leave.
+     * Get the user for the leave.
      */
-    public function users()
+    public function user()
     {
-        $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function signature()
+    {
+        return $this->belongsTo(User::class, 'signature_id');
     }
 }

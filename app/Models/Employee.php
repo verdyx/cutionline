@@ -17,10 +17,32 @@ class Employee extends Model
     protected $guarded = [];
 
     /**
-     * Get the users for the employee.
+     * Get the employee's name.
+     *
+     * @param  string  $value
+     * @return string
      */
-    public function users()
+    public function getNameAttribute()
     {
-        $this->belongsTo(User::class, 'user_id');
+        return $this->user->name;
+    }
+
+    /**
+     * Get the employee's first username.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getUsernameAttribute()
+    {
+        return $this->user->username;
+    }
+
+    /**
+     * Get the user for the employee.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

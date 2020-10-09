@@ -16,7 +16,7 @@ class EditEmployee extends Component
         $jenis_kelamin,
         $jabatan,
         $pangkat,
-        $unit_kerja,
+        // $unit_kerja,
         $masa_kerja,
         $inti,
         $tempat_lahir,
@@ -44,7 +44,7 @@ class EditEmployee extends Component
         'jenis_kelamin' => 'required',
         'jabatan' => 'required',
         'pangkat' => 'required',
-        'unit_kerja' => 'required',
+        // 'unit_kerja' => 'required',
         'masa_kerja' => 'required',
         'inti' => 'required',
         'tempat_lahir' => 'required',
@@ -66,7 +66,7 @@ class EditEmployee extends Component
         $this->jenis_kelamin = $this->employee->gender;
         $this->jabatan = $this->employee->position;
         $this->pangkat = $this->employee->rank;
-        $this->unit_kerja = $this->employee->work_unit;
+        // $this->unit_kerja = $this->employee->work_unit;
         $this->masa_kerja = $this->employee->years_of_service;
         $this->inti = $this->employee->is_core;
         $this->tanggal_lahir = $this->employee->birthday;
@@ -133,7 +133,7 @@ class EditEmployee extends Component
         $employee->position = $this->jabatan;
         $employee->rank = $this->pangkat;
         $employee->years_of_service = $this->masa_kerja;
-        $employee->work_unit = $this->unit_kerja;
+        // $employee->work_unit = $this->unit_kerja;
         $employee->is_core = $this->inti;
         $employee->birthday = $this->tanggal_lahir;
         $employee->birthplace = $this->tempat_lahir;

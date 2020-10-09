@@ -29,12 +29,14 @@
                             <tr>
                                 <td> {{ $item->letter_number }} </td>
                                 <td> {{ $item->user->name }} </td>
-                                <td> {{ $item->created_at }} </td>
+                                <td> {{ $item->created_at->translatedFormat('d F Y') }} </td>
                                 <td> {{ $item->number_of_days }} </td>
-                                <td> {{ $item->from_date }} </td>
-                                <td> {{ $item->to_date }} </td>
+                                <td> {{ $item->from_date->translatedFormat('d F Y') }} </td>
+                                <td> {{ $item->to_date->translatedFormat('d F Y') }} </td>
                                 <td> {{ $item->kind_of_leave }} </td>
-                                <a href="{{ route('admin.approve', $item->id) }}" class="btn btn-primary waves-effect waves-light"><i class="mdi mdi-file-document-edit-outline"></i></a>
+                                <td>
+                                    <a href="{{ route('admin.approve', $item->id) }}" class="btn btn-primary waves-effect waves-light"><i class="mdi mdi-file-document-edit-outline"></i></a>
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>

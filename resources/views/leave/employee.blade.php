@@ -23,7 +23,7 @@
                                         <select class="w-100 js-example-basic-single" name="nip" id="nip">
                                             <option disabled selected>Pilih NIP</option>
                                             @foreach ($employees as $item)
-                                                <option value="{{ $item->id }}">{{ $item->user->username }}</option>
+                                                <option value="{{ $item->id }}" {{ old('nip') == $item->id ? 'selected' : ''}}>{{ $item->user->username }}</option>
                                             @endforeach
                                         </select>
                                         @error('nip') <span class="error">{{ $message }}</span> @enderror

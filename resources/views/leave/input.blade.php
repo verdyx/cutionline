@@ -37,6 +37,13 @@
                             @error('jenis_cuti') <span class="error">{{ $message }}</span> @enderror
                         </div>
                     </div>
+                    <div class="form-group row @error('alasan') has-danger @enderror">
+                        <label class="col-sm-2 col-form-label">Alasan</label>
+                        <div class="col-sm-10">
+                            <textarea type="text" class="form-control" name="alasan" placeholder="Masukkan alasan" cols="30" rows="10">{{ old('alasan') }}</textarea>
+                            @error('alasan') <span class="error">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label"></label>
                         <div class="col-sm-10">

@@ -35,6 +35,7 @@ class LeaveController extends Controller
             'tanggal_awal' => 'required',
             'tanggal_akhir' => 'required|after_or_equal:' . $request->tanggal_awal,
             'jenis_cuti' => 'required',
+            'alasan' => 'required|max:191'
         ]);
 
         $diffDay = Carbon::parse($request->tanggal_awal)->diffInDays($request->tanggal_akhir) + 1;
@@ -44,6 +45,7 @@ class LeaveController extends Controller
             'kind_of_leave' => $request->jenis_cuti,
             'from_date' => $request->tanggal_awal,
             'to_date' => $request->tanggal_akhir,
+            'reason' => $request->alasan,
             'user_id' => auth()->id(),
         ]);
 
@@ -55,7 +57,8 @@ class LeaveController extends Controller
         $tahun = Carbon::now()->year;
         $tahun_cuti = [];
         for ($i = 0; $i <= 2; $i++) {
-            $leave_year = LeaveYear::whereLeaveYear($tahun - $i)->first();
+            $leave_year = LeaveYear::WhereEmployeeId(auth()->user()->employee->id)
+                ->whereLeaveYear($tahun - $i)->first();
             if ($leave_year) {
                 array_push($tahun_cuti, $leave_year);
             }
@@ -70,24 +73,28 @@ class LeaveController extends Controller
             'tanggal_awal' => 'required',
             'tanggal_akhir' => 'required|after_or_equal:' . $request->tanggal_awal,
             'tahun' => 'required',
+            'alasan' => 'required|max:191'
         ]);
 
         $diffDay = Carbon::parse($request->tanggal_awal)->diffInDays($request->tanggal_akhir) + 1;
+
         $leave_year = LeaveYear::find($request->tahun);
         if ($diffDay > $leave_year->day) {
             return back()->with('error', 'Tidak boleh melebihi kuota cuti');
-        } elseif($leave_year->leave_year != Carbon::now()->year && $diffDay > 6){
-            return back()->with('error', 'Sisa cuti selain tahun ini tidak boleh diambil melebihi 6 hari');
         }
+        // elseif($leave_year->leave_year != Carbon::now()->year && $diffDay > 6){
+        //     return back()->with('error', 'Sisa cuti selain tahun ini tidak boleh diambil melebihi 6 hari');
+        // }
 
-        $leave_year->day = $leave_year->day - $diffDay;
-        $leave_year->save();
+        // $leave_year->day = $leave_year->day - $diffDay;
+        // $leave_year->save();
 
         Leave::create([
             'number_of_days' => $diffDay,
             'kind_of_leave' => 'Cuti Tahunan',
             'from_date' => $request->tanggal_awal,
             'to_date' => $request->tanggal_akhir,
+            'reason' => $request->alasan,
             'user_id' => auth()->id(),
         ]);
 

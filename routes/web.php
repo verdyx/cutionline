@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'web'])->group(function () {
 
     Route::get('/', Dashboard::class)->name('dashboard');
+    Route::get('/cetak-surat/{id}', [LeaveController::class, 'printLetter'])->name('leave.print.letter');
+    Route::get('/cetak-permohonan/{id}', [LeaveController::class, 'printRequest'])->name('leave.print.req');
 
     Route::middleware('admin')->name('admin.')->prefix('admin')->group(function () {
         Route::get('/user', [UserController::class, 'index'])->name('user');
@@ -36,9 +38,8 @@ Route::middleware(['auth', 'web'])->group(function () {
 
         Route::get('/cuti-history', [LeaveController::class, 'history'])->name('history');
         Route::get('/cuti-approval', [LeaveController::class, 'index'])->name('approves');
-        Route::get('/cuti-approval/{id}', [LeaveController::class, 'index'])->name('approve');
-        Route::get('/cuti-approval/{id}/cetak', [LeaveController::class, 'print'])->name('leave.print');
-        Route::put('/cuti-approval/{id}', [LeaveController::class, 'index'])->name('approve.update');
+        Route::get('/cuti-approval/{id}', [LeaveController::class, 'detail'])->name('approve');
+        Route::put('/cuti-approval/{id}', [LeaveController::class, 'acc'])->name('approve.update');
 
         Route::get('/cuti-input', [LeaveController::class, 'employee'])->name('input.leave');
         Route::post('/cuti-input', [LeaveController::class, 'inputLeave'])->name('create.leave.employee');
@@ -54,5 +55,4 @@ Route::middleware(['auth', 'web'])->group(function () {
 
         Route::get('/history', [EmployeeLeaveController::class, 'history'])->name('history');
     });
-
 });

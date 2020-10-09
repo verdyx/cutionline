@@ -14,26 +14,43 @@
                         <thead>
                             <tr>
                                 <th>Tgl. Pengajuan</th>
+                                @if (auth()->user()->role == "Admin")
+                                <th>Nama</th>
+                                @endif
                                 <th>Jml. Hari</th>
                                 <th>Dari Tanggal</th>
                                 <th>Sampai Tanggal</th>
                                 <th>Jenis Cuti</th>
                                 <th>Persetujuan</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach ($leaves as $item)
                             <tr>
-                                <td> {{ date('d M Y', strtotime($item->from_date)) }} </td>
+                                <td> {{ $item->created_at->translatedFormat('d F Y') }} </td>
+                                @if (auth()->user()->role == "Admin")
+                                <td> {{ $item->user->name }}</td>
+                                @endif
                                 <td> {{ $item->number_of_days }} </td>
-                                <td> {{ date('d M Y', strtotime($item->from_date)) }} </td>
-                                <td> {{ date('d M Y', strtotime($item->to_date)) }} </td>
+                                <td> {{ $item->from_date->translatedFormat('d F Y') }} </td>
+                                <td> {{ $item->to_date->translatedFormat('d F Y') }} </td>
                                 <td> {{ $item->kind_of_leave }} </td>
+                                <td> {{ $item->status }} </td>
                                 <td>
-                                    {{ $item->status }}
-                                    @if ($item->status == "Disetujui")
-                                    <a href="{{ route('admin.approve', $item->id) }}" class="btn btn-primary waves-effect waves-light"><i class="mdi mdi-printer"></i></a>
+                                    @if ($item->status)
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary waves-effect waves-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="mdi mdi-printer"></i>
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            @if ($item->status == "Disetujui")
+                                            <a href="{{ route('leave.print.letter', $item->id) }}" class="dropdown-item">Surat Izin</a>
+                                            @endif
+                                            <a href="{{ route('leave.print.req', $item->id) }}" class="dropdown-item">Formulir Permintaan</a>
+                                        </div>
+                                    </div>
                                     @endif
                                 </td>
                             </tr>

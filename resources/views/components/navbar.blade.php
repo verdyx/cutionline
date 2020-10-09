@@ -39,6 +39,9 @@
                     <img src="{{ Auth::user()->profile_photo_url }}" alt="user" class="rounded-circle">
                 </a>
                 <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
+                    <div class="dropdown-item">
+                        {{ auth()->user()->name }}
+                    </div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <a class="dropdown-item text-danger" href="{{ route('logout') }}" onclick="event.preventDefault();

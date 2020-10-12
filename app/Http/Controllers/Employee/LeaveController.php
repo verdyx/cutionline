@@ -57,8 +57,8 @@ class LeaveController extends Controller
         $tahun = Carbon::now()->year;
         $tahun_cuti = [];
         for ($i = 0; $i <= 2; $i++) {
-            $leave_year = LeaveYear::WhereEmployeeId(auth()->user()->employee->id)
-                ->whereLeaveYear($tahun - $i)->first();
+            $leave_year = LeaveYear::where('employee_id', auth()->user()->employee->id)
+                ->where('leave_year', $tahun - $i)->first();
             if ($leave_year) {
                 array_push($tahun_cuti, $leave_year);
             }

@@ -1,6 +1,6 @@
 <a href="#" class="logo">
     <span class="logo-light">
-        SIPECI
+        <img src="{{ asset('assets/images/favicon.ico') }}" style="max-height: 35px"> SIPECI
     </span>
     <span class="logo-sm">
         S

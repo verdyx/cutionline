@@ -55,7 +55,7 @@ class LeaveController extends Controller
         $leave->as_signature = $request->sebagai;
 
         if ($request->approval == "Disetujui" && $leave->kind_of_leave == "Cuti Tahunan") {
-            $ly = LeaveYear::whereEmployeeId($leave->user->employee->id)->whereLeaveYear($leave->leave_year)->first();
+            $ly = LeaveYear::where('employee_id', $leave->user->employee->id)->where('leave_year', $leave->leave_year)->first();
             // $ly->day = $ly->day + $leave->number_of_days;
             // $leave_year = LeaveYear::find($request->tahun);
             if ($leave->number_of_day > $ly->day) {
@@ -81,7 +81,7 @@ class LeaveController extends Controller
             'tahun' => 'required'
         ]);
 
-        $leave = LeaveYear::whereEmployeeId($request->nip)->whereLeaveYear($request->tahun)->first();
+        $leave = LeaveYear::where('employee_id', $request->nip)->where('leave_year', $request->tahun)->first();
         if ($leave) {
             $leave->day = $leave->day + $request->hari;
             $leave->save();
@@ -154,28 +154,27 @@ class LeaveController extends Controller
 
         for ($i = 0; $i < 6; $i++) {
             if ($leave->kind_of_leave == $opt_cuti[$i]) {
-                $templateProcessor->setValue('cuti'.($i+1), '√');
+                $templateProcessor->setValue('cuti' . ($i + 1), '√');
             } else {
-                $templateProcessor->setValue('cuti'.($i+1), ' ');
+                $templateProcessor->setValue('cuti' . ($i + 1), ' ');
             }
         }
 
         for ($i = 0; $i <= 2; $i++) {
             $leave_year = LeaveYear::whereEmployeeId($leave->user->employee->id)
-                ->whereLeaveYear($tahun - $i)->first();
+                ->where('leave_year', $tahun - $i)->first();
             if ($leave_year) {
-                $templateProcessor->setValue('n'.$i, $leave_year->day);
+                $templateProcessor->setValue('n' . $i, $leave_year->day);
             } else {
-                $templateProcessor->setValue('n'.$i, ' ');
+                $templateProcessor->setValue('n' . $i, ' ');
             }
-
         }
 
         for ($i = 0; $i < 4; $i++) {
             if ($leave->status == $opt_acc[$i]) {
-                $templateProcessor->setValue('status'.($i+1), '√');
+                $templateProcessor->setValue('status' . ($i + 1), '√');
             } else {
-                $templateProcessor->setValue('status'.($i+1), ' ');
+                $templateProcessor->setValue('status' . ($i + 1), ' ');
             }
         }
 

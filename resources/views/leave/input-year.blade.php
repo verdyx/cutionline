@@ -57,6 +57,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title font-16 mb-4">Sisa Cuti</h4>
+                    @if ($tahun_cuti)
                     <table class="table table-hover">
                         <thead>
                             <tr>
@@ -73,6 +74,9 @@
                             @endforeach
                         </tbody>
                     </table>
+                    @else
+                    <p>Anda tidak memiliki sisa cuti</p>
+                    @endif
                 </div>
             </div>
         </div> <!-- end col -->

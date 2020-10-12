@@ -68,13 +68,13 @@
                         @error('pangkat') <span class="error">{{ $message }}</span> @enderror
                     </div>
                 </div>
-                <div class="form-group row @error('unit_kerja') has-danger @enderror">
+                {{-- <div class="form-group row @error('unit_kerja') has-danger @enderror">
                     <label class="col-sm-2 col-form-label">Unit Kerja</label>
                     <div class="col-sm-10">
                         <input class="form-control" type="text" wire:model="unit_kerja">
                         @error('unit_kerja') <span class="error">{{ $message }}</span> @enderror
                     </div>
-                </div>
+                </div> --}}
                 <div class="form-group row @error('masa_kerja') has-danger @enderror">
                     <label class="col-sm-2 col-form-label">Masa Kerja</label>
                     <div class="col-sm-10">

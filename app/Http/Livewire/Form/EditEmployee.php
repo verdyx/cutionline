@@ -34,7 +34,7 @@ class EditEmployee extends Component
         'jabatan' => 'required',
         'pangkat' => 'required',
         'tmt_cpns' => 'required',
-        'ketua' => 'required|unique',
+        'ketua' => 'nullable|unique:employees,is_leader',
         'telepon' => 'required',
         'hak_akses' => 'required',
         'password' => 'nullable|min:6',

@@ -35,6 +35,7 @@
                                 Ketua Institusi
                             </label>
                         </div>
+                        @error('ketua') <span class="error">{{ $message }}</span> @enderror
                     </div>
                 </div>
                 <div class="form-group row @error('pangkat') has-danger @enderror">

@@ -34,7 +34,7 @@ class Employee extends Component
         'jabatan' => 'required',
         'pangkat' => 'required',
         'tmt_cpns' => 'required',
-        'ketua' => 'nullable|unique',
+        'ketua' => 'nullable|unique:employees,is_leader',
         'telepon' => 'required',
         'atasan' => 'nullable',
         'hak_akses' => 'required',

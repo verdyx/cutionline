@@ -1,10 +1,15 @@
 <nav class="navbar-custom">
     <ul class="navbar-right list-inline float-right mb-0">
         @php
-            if (auth()->user()->role == "Admin") {
-                $leave = App\Models\Leave::whereNull('status')->count();
+            if (auth()->user()->employee->is_leader == 1) {
+                $leave = App\Models\Leave::where('status_boss', 'Disetujui')->WhereNull('status_leader')->count();
             } else {
-                $leave = App\Models\Leave::whereUserId(auth()->id())->whereNull('status')->count();
+                $employees = auth()->user()->employee->employees;
+                $employees_id = [];
+                foreach ($employees as $key => $value) {
+                    array_push($employees_id, $value->id);
+                }
+                $leave = App\Models\Leave::whereNull('status_boss')->whereIn('employee_id', $employees_id)->count();
             }
         @endphp
         <!-- notification -->
@@ -25,7 +30,10 @@
                     <!-- item-->
                     <a href="javascript:void(0);" class="dropdown-item notify-item active">
                         <div class="notify-icon bg-warning"><i class="mdi mdi-pause"></i></div>
-                        <p class="notify-details"><b>Pesan baru diterima</b><span class="text-muted">Anda memiliki {{ $leave }} pengajuan cuti</span></p>
+                        <p class="notify-details">
+                            <b>Pesan baru diterima</b>
+                            <span class="text-muted">Ada {{ $leave }} permohonan yang harus di acc</span>
+                        </p>
                     </a>
                 </div>
             </div>

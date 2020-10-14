@@ -6,23 +6,70 @@ use App\Models\Employee;
 use App\Models\Leave;
 use App\Models\LeaveYear;
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class LeaveController extends Controller
 {
+
+
+    /**
+     * Verifikasi cuti
+     */
+
     public function index()
     {
-        $leaves = Leave::whereNull('status')->get();
+        if (auth()->user()->employee->is_leader == 0) {
+            $employees = auth()->user()->employee->employees;
+            $employees_id = [];
+            foreach ($employees as $key => $value) {
+                array_push($employees_id, $value->id);
+            }
+            $leaves = Leave::whereNull('status_boss')->whereIn('employee_id', $employees_id)->get();
+        } else {
+            $leaves = Leave::where('status_boss', 'Disetujui')->whereNull('status_leader')->get();
+        }
+
         return view('leave.index', compact('leaves'));
     }
 
     public function history()
     {
-        $leaves = Leave::whereNotNull('status')->get();
+        $leaves = Leave::whereNotNull('status_boss')->whereNotNull('status_leader')->get();
         return view('leave.history', compact('leaves'));
     }
+
+    public function detail($id)
+    {
+        $leave = Leave::find($id);
+        $opt_acc = ['Disetujui', 'Tidak disetujui', 'Perubahan', 'Ditangguhkan'];
+        return view('leave.detail', compact('leave', 'opt_acc'));
+    }
+
+    public function acc($id, Request $request)
+    {
+        $request->validate([
+            'approval' => 'required',
+        ]);
+
+        $leave = Leave::find($id);
+
+        if (auth()->user()->employee->is_leader == 0) {
+            $leave->status_boss = $request->approval;
+        } else {
+            $leave->status_leader = $request->approval;
+        }
+
+        $leave->save();
+        return redirect()->route('employee.leave.acc.view')->with('success', 'Berhasil approve cuti');
+    }
+
+
+    /**
+     * Input data tahunan
+     */
 
     public function employee()
     {
@@ -31,94 +78,67 @@ class LeaveController extends Controller
         return view('leave.employee', compact('leaves', 'employees'));
     }
 
-    public function detail($id)
-    {
-        $leave = Leave::find($id);
-        $opt_acc = ['Disetujui', 'Tidak disetujui', 'Perubahan', 'Ditangguhkan'];
-        $opt_sign = Employee::whereIsCore(1)->get();
-        return view('leave.detail', compact('leave', 'opt_acc', 'opt_sign'));
-    }
-
-    public function acc($id, Request $request)
-    {
-        $request->validate([
-            'approval' => 'required',
-            'nomor_surat' => 'required',
-            'penandatangan' => 'required',
-            'sebagai' => 'required',
-        ]);
-
-        $leave = Leave::find($id);
-        $leave->status = $request->approval;
-        $leave->letter_number = 'W29.U / ' . $request->nomor_surat . ' / KP.05.2 / X / ' . Carbon::now()->year;
-        $leave->signature_id = $request->penandatangan;
-        $leave->as_signature = $request->sebagai;
-
-        if ($request->approval == "Disetujui" && $leave->kind_of_leave == "Cuti Tahunan") {
-            $ly = LeaveYear::where('employee_id', $leave->user->employee->id)->where('leave_year', $leave->leave_year)->first();
-            // $ly->day = $ly->day + $leave->number_of_days;
-            // $leave_year = LeaveYear::find($request->tahun);
-            if ($leave->number_of_day > $ly->day) {
-                return back()->with('error', 'Tidak boleh melebihi kuota cuti');
-            }
-            // elseif($ly->leave_year != Carbon::now()->year && $leave->number_of_day > 6){
-            //     return back()->with('error', 'Sisa cuti selain tahun ini tidak boleh diambil melebihi 6 hari');
-            // }
-            $ly->day = $ly->day - $leave->number_of_day;
-            $ly->save();
-        }
-
-        $leave->save();
-        return redirect()->route('admin.approves')->with('success', 'Berhasil approve cuti');
-    }
-
     public function inputLeave(Request $request)
     {
 
         $request->validate([
             'nip' => 'required',
-            'hari' => 'required|gte:0',
-            'tahun' => 'required'
+            'N2' => 'required|gte:0',
+            'N1' => 'required|gte:0',
+            'N' => 'required|gte:0',
         ]);
 
-        $leave = LeaveYear::where('employee_id', $request->nip)->where('leave_year', $request->tahun)->first();
+        $leave = LeaveYear::where('employee_id', $request->nip)->first();
         if ($leave) {
-            $leave->day = $leave->day + $request->hari;
+            $leave->N2 = $request->t2;
+            $leave->N1 = $request->t1;
+            $leave->N = $request->t;
             $leave->save();
         } else {
             LeaveYear::create([
                 'employee_id' => $request->nip,
-                'leave_year' => $request->tahun,
-                'day' => $request->hari
+                'N2' => $request->N2,
+                'N1' => $request->N1,
+                'N' => $request->N,
             ]);
         }
 
         return back()->with('success', 'Berhasil menambahkan cuti');
     }
 
-    public function deleteLeave($id)
+    public function resetLeave($id)
     {
-        LeaveYear::destroy($id);
-        return back()->with('success', 'Data berhasil dihapus');
+        $leave = LeaveYear::find($id);
+        $leave->T = 0;
+        $leave->save();
+
+        return back()->with('success', 'Berhasil mereset cuti');
     }
+
+
+    /**
+     * Fungsi cetak
+     */
 
     public function printLetter($id)
     {
         $leave = Leave::findOrFail($id);
         $templateProcessor = new TemplateProcessor('word-template/surat-cuti.docx');
         $templateProcessor->setValue('nomor_surat', $leave->letter_number);
-        $templateProcessor->setValue('nama', $leave->user->name);
-        $templateProcessor->setValue('nip', $leave->user->username);
-        $templateProcessor->setValue('pangkat', $leave->user->employee->rank);
-        $templateProcessor->setValue('jabatan', $leave->user->employee->position);
+        $templateProcessor->setValue('nama', $leave->employee->name);
+        $templateProcessor->setValue('nip', $leave->employee->username);
+        $templateProcessor->setValue('pangkat', $leave->employee->rank);
+        $templateProcessor->setValue('jabatan', $leave->employee->position);
         $templateProcessor->setValue('hari', $leave->number_of_days);
         $templateProcessor->setValue('tanggal_awal', $leave->from_date->translatedFormat('d F Y'));
         $templateProcessor->setValue('tanggal_akhir', $leave->to_date->translatedFormat('d F Y'));
         $templateProcessor->setValue('tanggal', Carbon::now()->translatedFormat('d F Y'));
-        $templateProcessor->setValue('sebagai', ucwords($leave->as_signature));
-        $templateProcessor->setValue('penandatangan', $leave->signature->name);
 
-        $fileName = 'Cuti ' . $leave->user->name;
+        $leader = Employee::where('is_leader', 1)->first();
+        $templateProcessor->setValue('jabatan_ketua', ucwords($leader->position));
+        $templateProcessor->setValue('nama_ketua', $leader->name);
+
+        $fileName = 'Cuti ' . $leave->employee->name;
         $templateProcessor->saveAs($fileName . '.docx');
         return response()->download($fileName . '.docx')->deleteFileAfterSend(true);
     }
@@ -126,6 +146,7 @@ class LeaveController extends Controller
     public function printRequest($id)
     {
         $leave = Leave::findOrFail($id);
+        $this->authorize('update', $leave);
         $opt_acc = ['Disetujui', 'Tidak disetujui', 'Perubahan', 'Ditangguhkan'];
         $opt_cuti = [
             'Cuti Tahunan',
@@ -136,21 +157,37 @@ class LeaveController extends Controller
             'Cuti di Luar Tanggungan Negara'
         ];
 
-        $tahun = Carbon::now()->year;
-
         $templateProcessor = new TemplateProcessor('word-template/permohonan-cuti.docx');
         $templateProcessor->setValue('nomor_surat', $leave->letter_number);
-        $templateProcessor->setValue('nama', $leave->user->name);
-        $templateProcessor->setValue('nip', $leave->user->username);
-        $templateProcessor->setValue('pangkat', $leave->user->employee->rank);
-        $templateProcessor->setValue('jabatan', $leave->user->employee->position);
+        $templateProcessor->setValue('nama', $leave->employee->name);
+        $templateProcessor->setValue('nip', $leave->employee->username);
+        $templateProcessor->setValue('pangkat', $leave->employee->rank);
+        $templateProcessor->setValue('jabatan', $leave->employee->position);
+        $templateProcessor->setValue('telepon', $leave->employee->phone);
         $templateProcessor->setValue('hari', $leave->number_of_days);
         $templateProcessor->setValue('tanggal_awal', $leave->from_date->translatedFormat('d F Y'));
         $templateProcessor->setValue('tanggal_akhir', $leave->to_date->translatedFormat('d F Y'));
+        $templateProcessor->setValue('masa_kerja', Carbon::createFromDate($leave->employee->tmt_cpns->year, $leave->employee->tmt_cpns->month)->diff(Carbon::now())->format('%y tahun, %m bulan'));
         $templateProcessor->setValue('tanggal', Carbon::now()->translatedFormat('d F Y'));
         $templateProcessor->setValue('alasan', $leave->reason);
-        $templateProcessor->setValue('sebagai', ucwords($leave->as_signature));
-        $templateProcessor->setValue('penandatangan', $leave->signature->name);
+        $templateProcessor->setValue('alamat_cuti', $leave->address);
+        $templateProcessor->setValue('jabatan_atasan', ucwords($leave->employee->boss->position));
+        $templateProcessor->setValue('atasan', $leave->employee->boss->name);
+
+        $leave_year = LeaveYear::where('employee_id', $leave->employee_id)->first();
+        if ($leave_year) {
+            $templateProcessor->setValue('n2', $leave_year->N2);
+            $templateProcessor->setValue('n1', $leave_year->N1);
+            $templateProcessor->setValue('n', $leave_year->N);
+        } else {
+            $templateProcessor->setValue('n2', '');
+            $templateProcessor->setValue('n1', '');
+            $templateProcessor->setValue('n', '');
+        }
+
+        $leader = Employee::where('is_leader', 1)->first();
+        $templateProcessor->setValue('jabatan_ketua', ucwords($leader->position));
+        $templateProcessor->setValue('nama_ketua', $leader->name);
 
         for ($i = 0; $i < 6; $i++) {
             if ($leave->kind_of_leave == $opt_cuti[$i]) {
@@ -160,25 +197,23 @@ class LeaveController extends Controller
             }
         }
 
-        for ($i = 0; $i <= 2; $i++) {
-            $leave_year = LeaveYear::whereEmployeeId($leave->user->employee->id)
-                ->where('leave_year', $tahun - $i)->first();
-            if ($leave_year) {
-                $templateProcessor->setValue('n' . $i, $leave_year->day);
-            } else {
-                $templateProcessor->setValue('n' . $i, ' ');
-            }
-        }
-
         for ($i = 0; $i < 4; $i++) {
-            if ($leave->status == $opt_acc[$i]) {
+            if ($leave->status_boss == $opt_acc[$i]) {
                 $templateProcessor->setValue('status' . ($i + 1), '√');
             } else {
                 $templateProcessor->setValue('status' . ($i + 1), ' ');
             }
         }
 
-        $fileName = 'Permohonan Cuti ' . $leave->user->name;
+        for ($i = 0; $i < 4; $i++) {
+            if ($leave->status_leader == $opt_acc[$i]) {
+                $templateProcessor->setValue('status-' . ($i + 1), '√');
+            } else {
+                $templateProcessor->setValue('status-' . ($i + 1), ' ');
+            }
+        }
+
+        $fileName = 'Permohonan Cuti ' . $leave->employee->name;
         $templateProcessor->saveAs($fileName . '.docx');
         return response()->download($fileName . '.docx')->deleteFileAfterSend(true);
     }

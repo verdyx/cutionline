@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employee;
 use App\Models\Leave;
 use App\Models\LeaveYear;
 use Carbon\Carbon;
@@ -12,7 +13,7 @@ class LeaveController extends Controller
 {
     public function history()
     {
-        $leaves = Leave::whereUserId(auth()->id())->orderBy('updated_at', 'desc')->get();
+        $leaves = Leave::whereEmployeeId(auth()->user()->employee_id)->orderBy('updated_at', 'desc')->get();
         return view('leave.history', compact('leaves'));
     }
 
@@ -25,8 +26,9 @@ class LeaveController extends Controller
             'Cuti Karena Alasan Penting',
             'Cuti di Luar Tanggungan Negara'
         ];
+        $leave = null;
 
-        return view('leave.input', compact('opt_cuti'));
+        return view('leave.input', compact('opt_cuti', 'leave'));
     }
 
     public function createLeave(Request $request)
@@ -35,36 +37,32 @@ class LeaveController extends Controller
             'tanggal_awal' => 'required',
             'tanggal_akhir' => 'required|after_or_equal:' . $request->tanggal_awal,
             'jenis_cuti' => 'required',
-            'alasan' => 'required|max:191'
+            'alasan' => 'required|max:191',
+            'alamat' => 'required',
         ]);
 
         $diffDay = Carbon::parse($request->tanggal_awal)->diffInDays($request->tanggal_akhir) + 1;
 
-        Leave::create([
+        $leave = Leave::create([
             'number_of_days' => $diffDay,
             'kind_of_leave' => $request->jenis_cuti,
             'from_date' => $request->tanggal_awal,
             'to_date' => $request->tanggal_akhir,
             'reason' => $request->alasan,
-            'user_id' => auth()->id(),
+            'employee_id' => auth()->user()->employee_id,
+            'address' => $request->alamat,
         ]);
+
+        $leave->letter_number = 'W29.U / ' . $leave->id . ' / KP.05.2 / X / ' . Carbon::now()->year;
+        $leave->save();
 
         return redirect()->route('employee.history')->with('success', 'Berhasil mengajukan cuti');
     }
 
     public function inputLeaveYear()
     {
-        $tahun = Carbon::now()->year;
-        $tahun_cuti = [];
-        for ($i = 0; $i <= 2; $i++) {
-            $leave_year = LeaveYear::where('employee_id', auth()->user()->employee->id)
-                ->where('leave_year', $tahun - $i)->first();
-            if ($leave_year) {
-                array_push($tahun_cuti, $leave_year);
-            }
-        }
-
-        return view('leave.input-year', compact('tahun_cuti'));
+        $leave = LeaveYear::where('employee_id', auth()->user()->employee_id)->first();
+        return view('leave.input-year', compact('leave'));
     }
 
     public function createLeaveYear(Request $request)
@@ -72,22 +70,20 @@ class LeaveController extends Controller
         $request->validate([
             'tanggal_awal' => 'required',
             'tanggal_akhir' => 'required|after_or_equal:' . $request->tanggal_awal,
-            'tahun' => 'required',
-            'alasan' => 'required|max:191'
+            'alasan' => 'required|max:191',
+            'alamat' => 'required',
         ]);
 
         $diffDay = Carbon::parse($request->tanggal_awal)->diffInDays($request->tanggal_akhir) + 1;
+        $leave_year = LeaveYear::where('employee_id', auth()->user()->employee_id)->first();
 
-        $leave_year = LeaveYear::find($request->tahun);
-        if ($diffDay > $leave_year->day) {
-            return back()->with('error', 'Tidak boleh melebihi kuota cuti');
+        if ($leave_year) {
+            if ((int)$leave_year->N < $diffDay) {
+                return back()->with('error', 'Tidak boleh melebihi sisa cuti')->withInput();
+            }
+        } else {
+            return back()->with('error', 'Anda tidak memiliki jatah cuti')->withInput();
         }
-        // elseif($leave_year->leave_year != Carbon::now()->year && $diffDay > 6){
-        //     return back()->with('error', 'Sisa cuti selain tahun ini tidak boleh diambil melebihi 6 hari');
-        // }
-
-        // $leave_year->day = $leave_year->day - $diffDay;
-        // $leave_year->save();
 
         Leave::create([
             'number_of_days' => $diffDay,
@@ -95,9 +91,64 @@ class LeaveController extends Controller
             'from_date' => $request->tanggal_awal,
             'to_date' => $request->tanggal_akhir,
             'reason' => $request->alasan,
-            'user_id' => auth()->id(),
+            'employee_id' => auth()->user()->employee_id,
+            'address' => $request->alamat
         ]);
 
         return redirect()->route('employee.history')->with('success', 'Berhasil mengajukan cuti');
+    }
+
+    public function edit($id)
+    {
+        $opt_cuti = [
+            'Cuti Besar',
+            'Cuti Sakit',
+            'Cuti Melahirkan',
+            'Cuti Karena Alasan Penting',
+            'Cuti di Luar Tanggungan Negara'
+        ];
+
+        $leave = Leave::find($id);
+        $this->authorize('update', $leave);
+        return view('leave.input', compact('opt_cuti', 'leave'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $this->authorize('update', Leave::find($id));
+        $request->validate([
+            'tanggal_awal' => 'required',
+            'tanggal_akhir' => 'required|after_or_equal:' . $request->tanggal_awal,
+            'jenis_cuti' => 'required',
+            'alasan' => 'required|max:191',
+            'alamat' => 'required',
+        ]);
+
+        $diffDay = Carbon::parse($request->tanggal_awal)->diffInDays($request->tanggal_akhir) + 1;
+
+        Leave::whereId($id)->update([
+            'number_of_days' => $diffDay,
+            'kind_of_leave' => $request->jenis_cuti,
+            'from_date' => $request->tanggal_awal,
+            'to_date' => $request->tanggal_akhir,
+            'reason' => $request->alasan,
+            'employee_id' => auth()->user()->employee_id,
+            'address' => $request->alamat
+        ]);
+
+        return redirect()->route('employee.history')->with('success', 'Berhasil memperbarui pengajuan cuti');
+    }
+
+    public function destroy($id)
+    {
+        $leave = Leave::find($id);
+        $this->authorize('delete', $leave);
+
+        if ($leave->status) {
+            return back()->with('warning', 'Maaf status tidak dapat dihapus');
+        }
+
+        $leave->delete();
+        return back()->with('success', 'Berhasil menghapus pengajuan');
     }
 }

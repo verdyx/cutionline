@@ -1,7 +1,9 @@
 <x-guest-layout>
     <x-jet-authentication-card>
         <x-slot name="logo">
-            <img src="{{ asset('assets/images/favicon.ico') }}" style="max-height: 150px">
+            <img src="{{ asset('assets/images/favicon.ico') }}" style="max-height: 110px; display: block; margin-left: auto; margin-right: auto;">
+            <br>
+            <h4>Sistem Informasi Pengelolaan Cuti dan Izin Pengadilan Tinggi Banten</h4>
         </x-slot>
 
         <x-jet-validation-errors class="mb-4" />
@@ -25,20 +27,7 @@
                 <x-jet-input class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
             </div>
 
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <input type="checkbox" class="form-checkbox" name="remember">
-                    <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-                </label>
-            </div>
-
             <div class="flex items-center justify-end mt-4">
-                @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">
-                        {{ __('Forgot your password?') }}
-                    </a>
-                @endif
-
                 <x-jet-button class="ml-4">
                     {{ __('Login') }}
                 </x-jet-button>

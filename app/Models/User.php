@@ -63,6 +63,17 @@ class User extends Authenticatable
     ];
 
     /**
+     * Get the employee's id.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getEmployeeIdAttribute()
+    {
+        return $this->employee->id;
+    }
+
+    /**
      * Get the employee data.
      */
     public function employee()

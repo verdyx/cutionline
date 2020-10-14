@@ -17,7 +17,7 @@ class Employee
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->role == "Pegawai") {
+        if (Auth::check() && Auth::user()->role == "pegawai") {
             return $next($request);
         }
         return abort(404);

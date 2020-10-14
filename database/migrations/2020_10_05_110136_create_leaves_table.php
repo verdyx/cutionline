@@ -15,21 +15,19 @@ class CreateLeavesTable extends Migration
     {
         Schema::create('leaves', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('employee_id');
             $table->string('letter_number')->nullable();
             $table->integer('number_of_days');
             $table->enum('kind_of_leave', ['Cuti Tahunan', 'Cuti Besar', 'Cuti Sakit', 'Cuti Melahirkan', 'Cuti Karena Alasan Penting', 'Cuti di Luar Tanggungan Negara']);
-            $table->string('leave_year')->nullable();
-            $table->enum('status', ['Disetujui', 'Tidak disetujui', 'Perubahan', 'Ditangguhkan'])->nullable();
+            $table->enum('status_boss', ['Disetujui', 'Tidak disetujui', 'Perubahan', 'Ditangguhkan'])->nullable();
+            $table->enum('status_leader', ['Disetujui', 'Tidak disetujui', 'Perubahan', 'Ditangguhkan'])->nullable();
             $table->date('from_date');
             $table->date('to_date');
+            $table->string('address');
             $table->string('reason');
-            $table->unsignedBigInteger('signature_id')->nullable();
-            $table->string('as_signature')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('signature_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
         });
     }
 

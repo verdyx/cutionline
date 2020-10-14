@@ -24,8 +24,7 @@
                                 <th>Nama</th>
                                 <th>Password</th>
                                 <th>Hak Akses</th>
-                                <th>Aktif</th>
-                                <th>Action</th>
+                                {{-- <th>Action</th> --}}
                             </tr>
                         </thead>
 
@@ -36,16 +35,9 @@
                                 <td> {{ $item->name }} </td>
                                 <td> {{ $item->show_password }} </td>
                                 <td> {{ $item->role }} </td>
-                                <td>
-                                    @if ($item->is_active == 1)
-                                        Y
-                                    @else
-                                        N
-                                    @endif
-                                </td>
-                                <td>
+                                {{-- <td>
                                     <a href="{{ route('admin.user.status', $item->id) }}" class="btn btn-primary waves-effect waves-light"><i class="mdi mdi-refresh"></i></a>
-                                </td>
+                                </td> --}}
                             </tr>
                             @endforeach
                         </tbody>

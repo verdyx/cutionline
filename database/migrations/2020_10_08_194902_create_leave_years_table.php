@@ -16,9 +16,9 @@ class CreateLeaveYearsTable extends Migration
         Schema::create('leave_years', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('employee_id');
-            $table->integer('day');
-            $table->year('leave_year');
-            $table->unique(['employee_id', 'leave_year']);
+            $table->string('N2');
+            $table->string('N1');
+            $table->string('N');
 
             $table->foreign('employee_id')->references('id')->on('employees');
         });

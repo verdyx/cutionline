@@ -15,22 +15,17 @@ class CreateEmployeesTable extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
-            $table->enum('gender', ['Laki-Laki', 'Perempuan']);
             $table->string('position');
             $table->string('rank');
-            $table->date('birthday');
-            $table->string('birthplace');
-            $table->enum('blood_types', ['A', 'B', 'O', 'AB']);
-            $table->enum('religion', ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Budha', 'Kepercayaan Lain']);
-            // $table->string('work_unit');
-            $table->string('years_of_service');
+            $table->date('tmt_cpns');
             $table->string('phone');
-            $table->string('address');
-            $table->boolean('is_core');
+            $table->boolean('is_leader')->nullable()->unique();
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('boss_id')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('boss_id')->references('id')->on('employees')->onDelete('cascade');
         });
     }
 

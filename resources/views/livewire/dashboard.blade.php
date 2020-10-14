@@ -50,7 +50,7 @@
     <div class="col-sm-6 col-xl-3">
         <div class="card">
             <div class="card-heading p-4">
-                @if (auth()->user()->role == "Admin")
+                @if (auth()->user()->role == "admin")
                     <div class="mini-stat-icon float-right">
                         <i class="mdi mdi-face bg-danger text-white"></i>
                     </div>

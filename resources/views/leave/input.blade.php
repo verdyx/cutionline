@@ -8,7 +8,61 @@
     <div class="row">
         <div class="col-12">
             <x-validation/>
-            <form action="" method="POST" autocomplete="off">
+            @if ($leave)
+            <form action="{{ route('employee.update.leave', $leave->id) }}" method="POST" autocomplete="off">
+                @method('put')
+                @csrf
+                <div class="card card-body mb-3">
+                    <div class="form-group row @error('tanggal_awal') has-danger @enderror">
+                        <label class="col-sm-2 col-form-label">Tanggal Awal</label>
+                        <div class="col-sm-10">
+                            <input type="date" class="form-control" name="tanggal_awal" value="{{ $leave->from_date->translatedFormat('Y-m-d') }}" placeholder="Awal" />
+                            @error('tanggal_awal') <span class="error">{{ $message }}</span><br> @enderror
+                        </div>
+                    </div>
+                    <div class="form-group row @error('tanggal_akhir') has-danger @enderror">
+                        <label class="col-sm-2 col-form-label">Tanggal Akhir</label>
+                        <div class="col-sm-10">
+                            <input type="date" class="form-control" name="tanggal_akhir" value="{{ $leave->to_date->translatedFormat('Y-m-d') }}" placeholder="Akhir" />
+                            @error('tanggal_akhir') <span class="error">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                    <div class="form-group row @error('jenis_cuti') has-danger @enderror">
+                        <label class="col-sm-2 col-form-label">Jenis Cuti</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="jenis_cuti">
+                                <option selected disabled>Pilih</option>
+                                @foreach ($opt_cuti as $item)
+                                    <option value="{{ $item }}" {{ $leave->kind_of_leave == $item ? 'selected' : ''}}>{{ $item }}</option>
+                                @endforeach
+                            </select>
+                            @error('jenis_cuti') <span class="error">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                    <div class="form-group row @error('alamat') has-danger @enderror">
+                        <label class="col-sm-2 col-form-label">Alamat Cuti</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="alamat"  value="{{ $leave->address }}" placeholder="Masukkan alamat" />
+                            @error('alamat') <span class="error">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                    <div class="form-group row @error('alasan') has-danger @enderror">
+                        <label class="col-sm-2 col-form-label">Alasan</label>
+                        <div class="col-sm-10">
+                            <textarea type="text" class="form-control" name="alasan" placeholder="Masukkan alasan" cols="30" rows="10">{{ $leave->reason }}</textarea>
+                            @error('alasan') <span class="error">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label"></label>
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-primary">Ajukan</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            @else
+            <form action="{{ route('employee.create.leave') }}" method="POST" autocomplete="off">
                 @csrf
                 <div class="card card-body mb-3">
                     <div class="form-group row @error('tanggal_awal') has-danger @enderror">
@@ -37,6 +91,13 @@
                             @error('jenis_cuti') <span class="error">{{ $message }}</span> @enderror
                         </div>
                     </div>
+                    <div class="form-group row @error('alamat') has-danger @enderror">
+                        <label class="col-sm-2 col-form-label">Alamat Cuti</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="alamat"  value="{{ old('alamat') }}" placeholder="Masukkan alamat" />
+                            @error('alamat') <span class="error">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
                     <div class="form-group row @error('alasan') has-danger @enderror">
                         <label class="col-sm-2 col-form-label">Alasan</label>
                         <div class="col-sm-10">
@@ -52,6 +113,7 @@
                     </div>
                 </div>
             </form>
+            @endif
         </div> <!-- end col -->
     </div> <!-- end row -->
 </x-dashboard-layout>

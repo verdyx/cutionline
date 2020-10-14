@@ -22,15 +22,10 @@ class Leave extends Model
     ];
 
     /**
-     * Get the user for the leave.
+     * Get the employee for the leave.
      */
-    public function user()
+    public function employee()
     {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function signature()
-    {
-        return $this->belongsTo(User::class, 'signature_id');
+        return $this->belongsTo(Employee::class, 'employee_id');
     }
 }

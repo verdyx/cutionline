@@ -6,40 +6,50 @@
     </x-slot>
 
     <div class="row">
-        <div class="col-8">
+        <div class="col-12">
             <div class="card m-b-30">
                 <div class="card-body">
+                    {{-- @if (auth()->user()->role == "admin")
                     <form action="{{ route('admin.approve.update', $leave->id) }}" method="POST" autocomplete="off">
+                    @else --}}
+                    <form action="{{ route('employee.leave.acc', $leave->id) }}" method="POST" autocomplete="off">
+                    {{-- @endif --}}
                         @method('put')
                         @csrf
-                        <div class="row">
+                        <div class="form-group row">
                             <label class="col-sm-2">NIP</label>
                             <div class="col-sm-10">
-                                <p>: {{ $leave->user->username }}</p>
+                                <input type="text" class="form-control" value="{{ $leave->employee->username }}" readonly>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="form-group row">
                             <label class="col-sm-2">Nama</label>
                             <div class="col-sm-10">
-                                <p>: {{ $leave->user->name }}</p>
+                                <input type="text" class="form-control" value="{{ $leave->employee->name }}" readonly>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="form-group row">
                             <label class="col-sm-2">Tanggal Cuti</label>
                             <div class="col-sm-10">
-                                <p>: {{ $leave->from_date->translatedFormat('d F Y') }} - {{ $leave->to_date->translatedFormat('d F Y') }} ({{ $leave->number_of_days }} hari)</p>
+                                <input type="text" class="form-control" value="{{ $leave->from_date->translatedFormat('d F Y') }} - {{ $leave->to_date->translatedFormat('d F Y') }} ({{ $leave->number_of_days }} hari)" readonly>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="form-group row">
                             <label class="col-sm-2">Jenis Cuti</label>
                             <div class="col-sm-10">
-                                <p>: {{ $leave->kind_of_leave }}</p>
+                                <input type="text" class="form-control" value="{{ $leave->kind_of_leave }}" readonly>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="form-group row">
+                            <label class="col-sm-2">Alamat Cuti</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" value="{{ $leave->address }}" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label class="col-sm-2">Alasan Cuti</label>
                             <div class="col-sm-10">
-                                <p>: {{ $leave->reason }}</p>
+                                <textarea readonly class="form-control" cols="30" rows="10">{{ $leave->reason }}</textarea>
                             </div>
                         </div>
                         <div class="form-group row @error('approval') has-danger @enderror">
@@ -54,31 +64,14 @@
                                 @error('approval') <span class="error">{{ $message }}</span> @enderror
                             </div>
                         </div>
-                        <div class="form-group row @error('nomor_surat') has-danger @enderror">
+                        {{-- <div class="form-group row @error('nomor_surat') has-danger @enderror">
                             <label class="col-sm-2">Nomor Surat</label>
                             <div class="col-sm-10">
                                 <input type="text" name="nomor_surat" class="form-control">
                                 <small>Ikuti panduan</small><br>
                                 @error('nomor_surat') <span class="error">{{ $message }}</span> @enderror
                             </div>
-                        </div>
-                        <div class="row">
-                            <label class="col-sm-2">Penandatangan</label>
-                            <div class="form-group @error('penandatangan') has-danger @enderror col-sm-4">
-                                <select class="form-control" name="penandatangan">
-                                    <option disabled selected>Pilih</option>
-                                    @foreach ($opt_sign as $item)
-                                        <option value="{{ $item->user_id }}" {{ old('penandatangan') == $item->user_id ? 'selected' : ''}}>{{ $item->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('penandatangan') <span class="error">{{ $message }}</span> @enderror
-                            </div>
-                            <label class="col-sm-2">Sebagai</label>
-                            <div class="form-group @error('sebagai') has-danger @enderror col-sm-4">
-                                <input type="text" name="sebagai" class="form-control">
-                                @error('sebagai') <span class="error">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
+                        </div> --}}
                         <div class="form-group row">
                             <label class="col-sm-2"></label>
                             <div class="col-sm-10">
@@ -89,7 +82,7 @@
                 </div>
             </div>
         </div> <!-- end col -->
-        <div class="col-4">
+        {{-- <div class="col-4">
             <div class="card card-body">
                 <h4 class="card-title font-16">Panduan</h4>
                 <p class="card-subtitle">
@@ -102,7 +95,7 @@
                     </ul>
                 </p>
             </div>
-        </div>
+        </div> --}}
     </div> <!-- end row -->
 </x-dashboard-layout>
 

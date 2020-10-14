@@ -6,11 +6,21 @@
     </x-slot>
 
     <div class="row">
-        <div class="col-sm-8">
+        <div class="col-12">
             <x-validation/>
             <form method="POST" action="{{ route('employee.create.leave.year') }}" autocomplete="off">
                 @csrf
                 <div class="card card-body mb-3">
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Sisa Cuti</label>
+                        <div class="col-sm-10">
+                            @if ($leave)
+                            <input type="text" class="form-control" value="{{ $leave->N }} Hari" readonly />
+                            @else
+                            <input type="text" class="form-control" value="Belum dibuat" readonly />
+                            @endif
+                        </div>
+                    </div>
                     <div class="form-group row @error('tanggal_awal') has-danger @enderror">
                         <label class="col-sm-2 col-form-label">Tanggal Awal</label>
                         <div class="col-sm-10">
@@ -25,20 +35,15 @@
                             @error('tanggal_akhir') <span class="error">{{ $message }}</span> @enderror
                         </div>
                     </div>
-                    <div class="form-group row @error('tahun') has-danger @enderror">
-                        <label class="col-sm-2 col-form-label">Tahun Cuti</label>
+                    <div class="form-group row @error('alamat') has-danger @enderror">
+                        <label class="col-sm-2 col-form-label">Alamat Cuti</label>
                         <div class="col-sm-10">
-                            <select class="form-control" name="tahun">
-                                <option selected disabled>Pilih</option>
-                                @foreach ($tahun_cuti as $item)
-                                    <option value="{{ $item->id }}" {{ old('tahun') == $item->id ? 'selected' : ''}}>{{ $item->leave_year }}</option>
-                                @endforeach
-                            </select>
-                            @error('tahun') <span class="error">{{ $message }}</span> @enderror
+                            <textarea type="text" class="form-control" name="alamat" placeholder="Masukkan alamat" cols="30" rows="10">{{ old('alamat') }}</textarea>
+                            @error('alamat') <span class="error">{{ $message }}</span> @enderror
                         </div>
                     </div>
                     <div class="form-group row @error('alasan') has-danger @enderror">
-                        <label class="col-sm-2 col-form-label">Alasan</label>
+                        <label class="col-sm-2 col-form-label">Alasan Cuti</label>
                         <div class="col-sm-10">
                             <textarea type="text" class="form-control" name="alasan" placeholder="Masukkan alasan" cols="30" rows="10">{{ old('alasan') }}</textarea>
                             @error('alasan') <span class="error">{{ $message }}</span> @enderror
@@ -52,33 +57,6 @@
                     </div>
                 </div>
             </form>
-        </div> <!-- end col -->
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title font-16 mb-4">Sisa Cuti</h4>
-                    @if ($tahun_cuti)
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Sisa (hari)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($tahun_cuti as $item)
-                            <tr>
-                                <th>{{ $item->leave_year }}</th>
-                                <td>{{ $item->day }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    @else
-                    <p>Anda tidak memiliki sisa cuti</p>
-                    @endif
-                </div>
-            </div>
         </div> <!-- end col -->
     </div> <!-- end row -->
 </x-dashboard-layout>

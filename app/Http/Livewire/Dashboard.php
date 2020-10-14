@@ -12,16 +12,16 @@ class Dashboard extends Component
 
     public function mount()
     {
-        if (auth()->user()->role == "Admin") {
+        if (auth()->user()->role == "admin") {
             $this->cuti = Leave::all()->count();
-            $this->approve = Leave::whereStatus('Disetujui')->get()->count();
-            $this->waiting = Leave::whereNull('status')->get()->count();
+            $this->approve = Leave::whereStatusBoss('Disetujui')->get()->count();
+            $this->waiting = Leave::whereNull('status_boss')->orWhereNull('status_leader')->get()->count();
             $this->pegawai = Employee::all()->count();
         } else {
-            $this->cuti = Leave::whereUserId(auth()->id())->get()->count();
-            $this->approve = Leave::whereUserId(auth()->id())->whereStatus('Disetujui')->get()->count();
-            $this->waiting = Leave::whereUserId(auth()->id())->whereNull('status')->get()->count();
-            $this->refuse = Leave::whereUserId(auth()->id())->whereStatus('Tidak disetujui')->get()->count();
+            $this->cuti = Leave::whereEmployeeId(auth()->user()->employee_id)->get()->count();
+            $this->approve = Leave::whereEmployeeId(auth()->user()->employee_id)->whereStatusBoss('Disetujui')->whereStatusLeader('Disetujui')->get()->count();
+            $this->waiting = Leave::whereEmployeeId(auth()->user()->employee_id)->whereNull('status_boss')->orWhereNull('status_leader')->get()->count();
+            $this->refuse = Leave::whereEmployeeId(auth()->user()->employee_id)->whereStatusBoss('Tidak disetujui')->whereStatusLeader('Tidak disetujui')->get()->count();
         }
 
     }

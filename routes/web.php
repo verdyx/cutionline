@@ -26,7 +26,7 @@ Route::middleware(['auth', 'web'])->group(function () {
     Route::get('/cetak-surat/{id}', [LeaveController::class, 'printLetter'])->name('leave.print.letter');
     Route::get('/cetak-permohonan/{id}', [LeaveController::class, 'printRequest'])->name('leave.print.req');
 
-    Route::middleware('admin')->name('admin.')->prefix('admin')->group(function () {
+    Route::middleware('admin')->name('admin.')->group(function () {
         Route::get('/user', [UserController::class, 'index'])->name('user');
         Route::get('/user/{id}', [UserController::class, 'viewStatus'])->name('user.status');
         Route::put('/user/{id}/{status}', [UserController::class, 'changeStatus'])->name('user.status.change');
@@ -43,15 +43,25 @@ Route::middleware(['auth', 'web'])->group(function () {
 
         Route::get('/cuti-input', [LeaveController::class, 'employee'])->name('input.leave');
         Route::post('/cuti-input', [LeaveController::class, 'inputLeave'])->name('create.leave.employee');
-        Route::delete('/cuti-input/{id}', [LeaveController::class, 'deleteLeave'])->name('destroy.leave.employee');
+        Route::put('/cuti-input/{id}', [LeaveController::class, 'resetLeave'])->name('reset.leave.employee');
+        // Route::delete('/cuti-input/{id}', [LeaveController::class, 'deleteLeave'])->name('destroy.leave.employee');
     });
 
-    Route::middleware('employee')->name('employee.')->prefix('employee')->group(function () {
+    Route::middleware('employee')->name('employee.')->group(function () {
         Route::get('/permohonan', [EmployeeLeaveController::class, 'inputLeave'])->name('leave');
         Route::post('/permohonan', [EmployeeLeaveController::class, 'createLeave'])->name('create.leave');
+        Route::get('/permohonan/{id}', [EmployeeLeaveController::class, 'edit'])->name('edit.leave');
+        Route::put('/permohonan/{id}', [EmployeeLeaveController::class, 'update'])->name('update.leave');
+        Route::delete('/permohonan/{id}', [EmployeeLeaveController::class, 'destroy'])->name('destroy.leave');
 
-        Route::get('/permohonan/tahunan', [EmployeeLeaveController::class, 'inputLeaveYear'])->name('leave.year');
-        Route::post('/permohonan/tahunan', [EmployeeLeaveController::class, 'createLeaveYear'])->name('create.leave.year');
+        Route::get('/permohonan-tahunan', [EmployeeLeaveController::class, 'inputLeaveYear'])->name('leave.year');
+        Route::post('/permohonan-tahunan', [EmployeeLeaveController::class, 'createLeaveYear'])->name('create.leave.year');
+
+        Route::middleware('can:boss,leader')->group(function () {
+            Route::get('/verifikasi', [LeaveController::class, 'index'])->name('leave.acc.view');
+            Route::get('/verifikasi/{id}', [LeaveController::class, 'detail'])->name('leave.detail');
+            Route::put('/verifikasi/{id}', [LeaveController::class, 'acc'])->name('leave.acc');
+        });
 
         Route::get('/history', [EmployeeLeaveController::class, 'history'])->name('history');
     });

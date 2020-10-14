@@ -13,29 +13,32 @@
                     <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
                             <tr>
-                                <th>No. Cuti</th>
                                 <th>Nama</th>
-                                <th>Tgl. Pengajuan</th>
-                                <th>Jml. Hari</th>
+                                <th>Jenis Cuti</th>
                                 <th>Dari Tanggal</th>
                                 <th>Sampai Tanggal</th>
-                                <th>Jenis Cuti</th>
-                                <th>Action</th>
+                                <th style="max-width: 50px">Lama cuti</th>
+                                <th>Tgl. Pengajuan</th>
+                                <th style="max-width: 50px">Action</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach ($leaves as $item)
                             <tr>
-                                <td> {{ $item->letter_number }} </td>
-                                <td> {{ $item->user->name }} </td>
-                                <td> {{ $item->created_at->translatedFormat('d F Y') }} </td>
-                                <td> {{ $item->number_of_days }} </td>
+                                <td> {{ $item->employee->name }} </td>
+                                <td> {{ $item->kind_of_leave }} </td>
                                 <td> {{ $item->from_date->translatedFormat('d F Y') }} </td>
                                 <td> {{ $item->to_date->translatedFormat('d F Y') }} </td>
-                                <td> {{ $item->kind_of_leave }} </td>
+                                <td> {{ $item->number_of_days }} </td>
+                                <td> {{ $item->created_at->translatedFormat('d F Y') }} </td>
                                 <td>
+                                    @if (auth()->user()->role == "admin")
                                     <a href="{{ route('admin.approve', $item->id) }}" class="btn btn-primary waves-effect waves-light"><i class="mdi mdi-file-document-edit-outline"></i></a>
+                                    @else
+                                    <a href="{{ route('employee.leave.detail', $item->id) }}" class="btn btn-primary waves-effect waves-light"><i class="mdi mdi-file-document-edit-outline"></i></a>
+                                    @endif
+
                                 </td>
                             </tr>
                             @endforeach

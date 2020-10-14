@@ -25,9 +25,7 @@
                         <tr>
                             <th>NIP</th>
                             <th>Nama</th>
-                            <th>JK</th>
                             <th>Jabatan</th>
-                            <th>Inti</th>
                             <th>No Telp</th>
                             <th>Action</th>
                         </tr>
@@ -38,15 +36,7 @@
                             <tr>
                                 <td> {{ $item->user->username }} </td>
                                 <td> {{ $item->user->name }} </td>
-                                <td> {{ $item->gender }} </td>
                                 <td> {{ $item->position }} </td>
-                                <td>
-                                    @if ($item->is_core == 1)
-                                        Y
-                                    @else
-                                        N
-                                    @endif
-                                </td>
                                 <td> {{ $item->phone }} </td>
                                 <td>
                                     <a href="{{ route('admin.employee.detail', $item->id) }}" class="btn btn-primary"><i class="mdi mdi-account-edit"></i></a>

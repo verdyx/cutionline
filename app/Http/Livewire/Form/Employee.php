@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Form;
 
 use App\Models\Employee as ModelsEmployee;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Employee extends Component
@@ -12,26 +13,16 @@ class Employee extends Component
     public
         $nip,
         $nama,
-        $jenis_kelamin,
         $jabatan,
         $pangkat,
-        // $unit_kerja,
-        $masa_kerja,
-        $inti,
-        $tempat_lahir,
-        $tanggal_lahir,
-        $golongan_darah,
-        $agama,
+        $tmt_cpns,
+        $ketua,
         $telepon,
-        $alamat,
+        $atasan,
         $hak_akses,
         $password;
 
-    public $opt_gender,
-        $opt_blood,
-        $opt_religion,
-        $opt_status,
-        $opt_access;
+    public $opt_access, $opt_boss;
 
     /**
      * Validation
@@ -40,79 +31,62 @@ class Employee extends Component
     protected $rules = [
         'nip' => 'required|unique:users,username',
         'nama' => 'required',
-        'jenis_kelamin' => 'required',
         'jabatan' => 'required',
         'pangkat' => 'required',
-        // 'unit_kerja' => 'required',
-        'masa_kerja' => 'required',
-        'inti' => 'required',
-        'tempat_lahir' => 'required',
-        'tanggal_lahir' => 'required|date',
-        'golongan_darah' => 'required',
-        'agama' => 'required',
+        'tmt_cpns' => 'required',
+        'ketua' => 'nullable|unique',
         'telepon' => 'required',
-        'alamat' => 'required',
+        'atasan' => 'nullable',
         'hak_akses' => 'required',
         'password' => 'required|min:6',
+    ];
+
+    protected $messages = [
+        'ketua.unique' => 'Ketua telah dipilih, hanya boleh memilih 1 ketua.',
     ];
 
     public function mount()
     {
         $this->opt_access = [
-            'Admin',
-            'Pegawai'
+            'admin',
+            'pegawai'
         ];
 
-        $this->opt_gender = [
-            'Laki-Laki',
-            'Perempuan'
-        ];
-
-        $this->opt_religion = [
-            'Islam',
-            'Kristen',
-            'Katolik',
-            'Hindu',
-            'Budha',
-            'Kepercayaan Lain'
-        ];
-
-        $this->opt_blood = [
-            'A',
-            'B',
-            'AB',
-            'O'
-        ];
+        $this->opt_boss = User::all();
     }
 
     public function submit()
     {
+
         $this->validate();
 
-        $user = User::create([
-            'name' => $this->nama,
-            'username' => $this->nip,
-            'show_password' => $this->password,
-            'password' => bcrypt($this->password),
-            'is_active' => 1,
-            'position' => $this->hak_akses
-        ]);
+        if (!$this->ketua) {
+            $this->ketua = 0;
+        }
 
-        ModelsEmployee::create([
-            'user_id' => $user->id,
-            'gender' => $this->jenis_kelamin,
-            'position' => $this->jabatan,
-            'rank' => $this->pangkat,
-            // 'work_unit' => $this->unit_kerja,
-            'years_of_service' => $this->masa_kerja,
-            'is_core' => $this->inti,
-            'birthday' => $this->tanggal_lahir,
-            'birthplace' => $this->tempat_lahir,
-            'blood_types' => $this->golongan_darah,
-            'religion' => $this->agama,
-            'phone' => $this->telepon,
-            'address' => $this->alamat,
-        ]);
+        if ($this->atasan == "Pilih") {
+            $this->atasan = null;
+        }
+
+        DB::transaction(function () {
+            $user = User::create([
+                'name' => $this->nama,
+                'username' => $this->nip,
+                'show_password' => $this->password,
+                'password' => bcrypt($this->password),
+                'position' => $this->hak_akses
+            ]);
+
+            ModelsEmployee::create([
+                'user_id' => $user->id,
+                'position' => $this->jabatan,
+                'rank' => $this->pangkat,
+                'tmt_cpns' => $this->tmt_cpns,
+                'is_leader' => $this->ketua,
+                'boss_id' => $this->atasan,
+                'phone' => $this->telepon,
+            ]);
+        });
 
         session()->flash('success', 'Pegawai berhasil dibuat');
         return redirect()->route('admin.employee');

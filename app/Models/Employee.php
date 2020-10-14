@@ -16,6 +16,10 @@ class Employee extends Model
      */
     protected $guarded = [];
 
+    protected $dates = [
+        'tmt_cpns',
+    ];
+
     /**
      * Get the employee's name.
      *
@@ -44,5 +48,21 @@ class Employee extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Get the boss for the employee.
+     */
+    public function boss()
+    {
+        return $this->belongsTo(Employee::class, 'boss_id');
+    }
+
+    /**
+     * Get the employee for the employee.
+     */
+    public function employees()
+    {
+        return $this->hasMany(Employee::class, 'boss_id', 'id');
     }
 }

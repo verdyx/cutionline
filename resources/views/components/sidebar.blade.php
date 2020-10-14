@@ -12,42 +12,44 @@
                     </x-nav-link>
                 </li>
 
-                @if (auth()->user()->role == "Admin")
+                @if (auth()->user()->role == "admin")
                 <li>
-                    <a href="javascript:void(0);" class="waves-effect"><i class="icon-profile"></i><span>
-                            Pegawai <span class="float-right menu-arrow"><i
-                                    class="mdi mdi-chevron-right"></i></span> </span></a>
-                    <ul class="submenu">
-                        <li>
-                            <x-nav-link href="{{ route('admin.employee') }}" :active="request()->routeIs('admin.employee')">
-                                <span> Data Pegawai </span>
-                            </x-nav-link>
-                        </li>
-                    </ul>
-                </li>
-
-                <li>
-                    <x-nav-link href="{{ route('admin.input.leave') }}" :active="request()->routeIs('admin.input.leave')">
-                        <i class="icon-todolist-add"></i><span> Input data cuti Tahunan </span>
+                    <x-nav-link href="{{ route('admin.employee') }}" :active="request()->routeIs('admin.employee')">
+                        <i class="icon-profile"></i><span> Data Pegawai </span>
                     </x-nav-link>
                 </li>
-
+                @php
+                    $leave = App\Models\Leave::whereNull('status_boss')->orWhereNull('status_leader')->count();
+                @endphp
                 <li>
-                    <x-nav-link href="{{ route('admin.approves') }}" :active="request()->routeIs('admin.approves')">
-                        @php
-                            $leave = App\Models\Leave::whereNull('status')->count();
-                        @endphp
-                        <i class="icon-check"></i><span> Approval Cuti </span>
-                        @if ($leave)
-                        <span class="badge badge-danger badge-pill float-right">{{ $leave }}</span>
-                        @endif
-                    </x-nav-link>
-                </li>
+                    <a href="javascript:void(0);" class="waves-effect"><i class="icon-todolist"></i>
+                        <span> Cuti <span class="float-right menu-arrow"><i
+                                class="mdi mdi-chevron-right"></i></span>
+                                {{-- @if ($leave)
+                                <span class="badge badge-danger badge-pill float-right">{{ $leave }}</span>
+                                @endif --}}
+                            </span></a>
+                        <ul class="submenu">
+                            <li>
+                                <x-nav-link href="{{ route('admin.input.leave') }}" :active="request()->routeIs('admin.input.leave')">
+                                    <span> Input data cuti tahunan </span>
+                                </x-nav-link>
+                            </li>
+                            {{-- <li>
+                                <x-nav-link href="{{ route('admin.approves') }}" :active="request()->routeIs('admin.approves')">
 
-                <li>
-                    <x-nav-link href="{{ route('admin.history') }}" :active="request()->routeIs('admin.history')">
-                        <i class="icon-clock"></i><span> History Cuti </span>
-                    </x-nav-link>
+                                    <span> Verifikasi Cuti </span>
+                                    @if ($leave)
+                                    <span class="badge badge-danger badge-pill float-right">{{ $leave }}</span>
+                                    @endif
+                                </x-nav-link>
+                            </li>
+                            <li>
+                                <x-nav-link href="{{ route('admin.history') }}" :active="request()->routeIs('admin.history')">
+                                    <span> Riwayat Cuti </span>
+                                </x-nav-link>
+                            </li> --}}
+                        </ul>
                 </li>
 
                 <li>
@@ -63,6 +65,29 @@
                     </ul>
                 </li>
                 @else
+
+                @can('boss', 'leader')
+                @php
+                    if (auth()->user()->employee->is_leader == 1) {
+                        $leave = App\Models\Leave::where('status_boss', 'Disetujui')->WhereNull('status_leader')->count();
+                    } else {
+                        $employees = auth()->user()->employee->employees;
+                        $employees_id = [];
+                        foreach ($employees as $key => $value) {
+                            array_push($employees_id, $value->id);
+                        }
+                        $leave = App\Models\Leave::whereNull('status_boss')->whereIn('employee_id', $employees_id)->count();
+                    }
+                @endphp
+                <li>
+                    <x-nav-link href="{{ route('employee.leave.acc.view') }}" :active="request()->routeIs('employee.leave.acc.view')">
+                        <i class="icon-check"></i><span> Verifikasi Cuti </span>
+                        @if ($leave)
+                        <span class="badge badge-danger badge-pill float-right">{{ $leave }}</span>
+                        @endif
+                    </x-nav-link>
+                </li>
+                @endcan
 
                 <li>
                     <a href="javascript:void(0);" class="waves-effect"><i class="icon-profile"></i><span>
@@ -85,7 +110,7 @@
 
                 <li>
                     <x-nav-link href="{{ route('employee.history') }}" :active="request()->routeIs('employee.history')">
-                        <i class="icon-clock"></i><span> History Cuti </span>
+                        <i class="icon-clock"></i><span> Riwayat Cuti </span>
                     </x-nav-link>
                 </li>
 

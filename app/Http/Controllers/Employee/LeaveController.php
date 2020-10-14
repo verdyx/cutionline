@@ -85,15 +85,18 @@ class LeaveController extends Controller
             return back()->with('error', 'Anda tidak memiliki jatah cuti')->withInput();
         }
 
-        Leave::create([
+        $leave = Leave::create([
             'number_of_days' => $diffDay,
             'kind_of_leave' => 'Cuti Tahunan',
             'from_date' => $request->tanggal_awal,
             'to_date' => $request->tanggal_akhir,
             'reason' => $request->alasan,
             'employee_id' => auth()->user()->employee_id,
-            'address' => $request->alamat
+            'address' => $request->alamat,
         ]);
+
+        $leave->letter_number = 'W29.U / ' . $leave->id . ' / KP.05.2 / X / ' . Carbon::now()->year;
+        $leave->save();
 
         return redirect()->route('employee.history')->with('success', 'Berhasil mengajukan cuti');
     }

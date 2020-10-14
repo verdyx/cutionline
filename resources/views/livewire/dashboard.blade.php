@@ -70,6 +70,23 @@
             </div>
         </div>
     </div>
+
+    @if (auth()->user()->role != "admin")
+    <div class="col-sm-6 col-xl-3">
+        <div class="card">
+            <div class="card-heading p-4">
+                <div class="mini-stat-icon float-right">
+                    <i class="mdi mdi-check-bold bg-warning text-white"></i>
+                </div>
+                <div>
+                    <h5 class="font-16">Menunggu Verifikasi</h5>
+                </div>
+                <h3 class="mt-4">{{ $waiting_list }}</h3>
+            </div>
+        </div>
+    </div>
+    @endif
+
 </div>
 
 @push('css')

@@ -60,6 +60,11 @@ class LeaveController extends Controller
             $leave->status_boss = $request->approval;
         } else {
             $leave->status_leader = $request->approval;
+            if ($request->approval == "Disetujui") {
+                $leave_year = LeaveYear::where('employee_id', $leave->employee_id)->first();
+                $leave_year->N = $leave_year->N - $leave->number_of_days;
+                $leave_year->save();
+            }
         }
 
         $leave->save();
